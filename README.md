@@ -5,7 +5,7 @@
 We are going to investigate how to effectively parallelize Worst-Case Optimal Join (WCOJ) algorithms on multicore machines. We will try to optimize join performance by exploring full multi-variable partitioning, eager indexing (CoCo), and evaluating performance bottlenecks such as load skew and redundant computation.
 
 ## URL
-[https://github.com/supergary10/cmu-15618-final-project/](https://github.com/supergary10/cmu-15618-final-project)
+[https://supergary10.github.io/cmu-15618-final-project/](https://supergary10.github.io/cmu-15618-final-project/)
 
 ## Background
 Worst-Case Optimal Join (WCOJ) algorithms evaluate multiway joins by iterating over join variables one at a time and performing multi-relation intersections. These algorithms are particularly effective for cyclic queries (like triangle queries), where traditional binary joins underperform.
