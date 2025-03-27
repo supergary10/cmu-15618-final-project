@@ -77,4 +77,4 @@ We are familiar with C++, and we have experienced a lot of OpenMP in Assignment 
 
 2. Ngo, H. Q., Porat, E., Ré, C., & Rudra, A. (2018). Worst-case optimal join algorithms. Journal of the ACM (JACM), 65(3), 1-40.
 
-3. SNAP Datasets: https://snap.stanford.edu/data/
+3. SNAP Datasets: [https://snap.stanford.edu/data/](https://snap.stanford.edu/data/)
