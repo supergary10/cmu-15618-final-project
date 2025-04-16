@@ -6,6 +6,7 @@ We are going to investigate how to effectively parallelize Worst-Case Optimal Jo
 
 ## URL
 [https://supergary10.github.io/cmu-15618-final-project/](https://supergary10.github.io/cmu-15618-final-project/)
+[Milestone](https://supergary10.github.io/cmu-15618-final-project/milestone)
 
 ## Background
 Worst-Case Optimal Join (WCOJ) algorithms evaluate multiway joins by iterating over join variables one at a time and performing multi-relation intersections. These algorithms are particularly effective for cyclic queries (like triangle queries), where traditional binary joins underperform.
