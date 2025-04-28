@@ -1,17 +1,43 @@
-cmake_minimum_required(VERSION 3.10)
-project(LeapfrogJoinBenchmark)
+cmake_minimum_required(VERSION 3.10) # Or higher if needed
 
-set(CMAKE_CXX_STANDARD 17)
+project(ParallelIntersectionBench LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD 17) # Use C++17 or higher
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# --- Find and Configure OpenMP ---
+# find_package will find the necessary compiler flags and libraries
+find_package(OpenMP REQUIRED)
+if(OpenMP_FOUND)
+    message(STATUS "Found OpenMP, enabling parallel execution.")
+else()
+    # This shouldn't happen with REQUIRED, but good practice
+    message(FATAL_ERROR "OpenMP not found. This project requires OpenMP.")
+endif()
+
+# --- Define Include Directory ---
 include_directories(include)
 
-find_package(OpenMP REQUIRED)
-
-add_executable(leapfrog_benchmark
+# --- Add Executable Target ---
+add_executable(intersection_benchmark
     src/main.cpp
+    src/intersection.cpp
     src/generate_data.cpp
 )
 
-if(OpenMP_CXX_FOUND)
-    target_link_libraries(leapfrog_benchmark PUBLIC OpenMP::OpenMP_CXX)
+# --- Link OpenMP Library ---
+# This is the standard and correct way to link OpenMP using CMake targets
+# It handles both the necessary compiler flags and linker dependencies.
+target_link_libraries(intersection_benchmark PRIVATE OpenMP::OpenMP_CXX)
+
+
+# --- Optional: Add Build Type ---
+# Allows for optimized builds, e.g., cmake .. -DCMAKE_BUILD_TYPE=Release
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose build type: Debug Release RelWithDebInfo MinSizeRel" FORCE)
+  message(STATUS "Build type not specified, using Release")
 endif()
+
+# --- Optional: Installation ---
+# install(TARGETS intersection_benchmark DESTINATION bin)
