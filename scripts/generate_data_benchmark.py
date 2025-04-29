@@ -130,19 +130,10 @@ def main():
     benchmark_patterns = [
         # 1. Small dataset with even sizes and high overlap (baseline)
         {
-            "name": "small_even_high_overlap",
+            "name": "small_even",
             "num_vectors": 3,
-            "vector_sizes": [100, 100, 100],
+            "vector_sizes": [3000, 3000, 3000],
             "overlap_ratio": 0.8,
-            "distribution": "uniform"
-        },
-        
-        # 2. Small dataset with even sizes and low overlap
-        {
-            "name": "small_even_low_overlap",
-            "num_vectors": 3,
-            "vector_sizes": [100, 100, 100],
-            "overlap_ratio": 0.2,
             "distribution": "uniform"
         },
         
@@ -150,7 +141,7 @@ def main():
         {
             "name": "medium_even",
             "num_vectors": 3,
-            "vector_sizes": [10000, 10000, 10000],
+            "vector_sizes": [30000, 30000, 30000],
             "overlap_ratio": 0.5,
             "distribution": "uniform"
         },
@@ -159,25 +150,16 @@ def main():
         {
             "name": "large_even",
             "num_vectors": 3,
-            "vector_sizes": [100000, 100000, 100000],
+            "vector_sizes": [150000, 150000, 150000],
             "overlap_ratio": 0.5,
             "distribution": "uniform"
         },
         
         # 5. Skewed sizes (one small, others large)
         {
-            "name": "size_skewed_small_first",
+            "name": "size_skewed",
             "num_vectors": 3,
             "vector_sizes": [1000, 50000, 50000],
-            "overlap_ratio": 0.5,
-            "distribution": "uniform"
-        },
-        
-        # 6. Skewed sizes (one large, others small)
-        {
-            "name": "size_skewed_large_first",
-            "num_vectors": 3,
-            "vector_sizes": [50000, 1000, 1000],
             "overlap_ratio": 0.5,
             "distribution": "uniform"
         },
@@ -191,12 +173,20 @@ def main():
             "distribution": "zipfian",
             "zipfian_alpha": 1.5
         },
-        
+
         # 8. Clustered values
         {
             "name": "clustered_values",
             "num_vectors": 3,
             "vector_sizes": [10000, 10000, 10000],
+            "overlap_ratio": 0.5,
+            "distribution": "clustered"
+        },
+
+        {
+            "name": "clustered_values_large",
+            "num_vectors": 3,
+            "vector_sizes": [50000, 50000, 50000],
             "overlap_ratio": 0.5,
             "distribution": "clustered"
         },
@@ -206,17 +196,16 @@ def main():
             "name": "many_vectors",
             "num_vectors": 8,
             "vector_sizes": [5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000],
-            "overlap_ratio": 0.4,
-            "distribution": "uniform"
-        },
-        
-        # 10. Extreme case - very large vectors
-        {
-            "name": "extreme_large",
-            "num_vectors": 3,
-            "vector_sizes": [500000, 500000, 500000],
             "overlap_ratio": 0.3,
             "distribution": "uniform"
+        },
+
+        {
+            "name": "many_vectors_clustered",
+            "num_vectors": 8,
+            "vector_sizes": [5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000],
+            "overlap_ratio": 0.3,
+            "distribution": "clustered"
         }
     ]
     
