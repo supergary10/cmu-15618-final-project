@@ -14,7 +14,6 @@ std::vector<int> parallelLinearScanIntersection(const std::vector<std::vector<in
         return inputVectors[0];
     }
 
-    // Find the index of the smallest non-empty vector
     int smallestIndex = -1;
     size_t minSize = std::numeric_limits<size_t>::max();
     for (size_t i = 0; i < inputVectors.size(); ++i) {
@@ -24,11 +23,11 @@ std::vector<int> parallelLinearScanIntersection(const std::vector<std::vector<in
                 smallestIndex = static_cast<int>(i);
             }
         } else {
-            return {}; // Intersection with empty set is empty
+            return {};
         }
     }
     if (smallestIndex == -1) {
-        return {}; // All vectors were empty
+        return {};
     }
 
     std::cout << "Smallest vector index: " << smallestIndex << std::endl;
@@ -38,24 +37,20 @@ std::vector<int> parallelLinearScanIntersection(const std::vector<std::vector<in
     std::vector<std::vector<int>> threadResults;
 
     std::cout << "Starting parallel processing with " << numPartitions << " partitions." << std::endl;
-    #pragma omp parallel // Start parallel region
+    #pragma omp parallel
     {
-        // Use #pragma omp single to have only one thread resize the vector
-        // based on the actual number of threads in this parallel region.
         #pragma omp single
         {
             threadResults.resize(omp_get_num_threads());
-        } // Implicit barrier ensures all threads see the resized vector
+        }
 
-        int tid = omp_get_thread_num(); // Get the actual thread ID
+        int tid = omp_get_thread_num();
 
-        // The 'for' directive distributes loop iterations among threads
         #pragma omp for schedule(dynamic)
         for (int idx = 0; idx < static_cast<int>(base.size()); ++idx) {
             int candidate = base[idx];
             bool in_all = true;
 
-            // Check candidate against all *other* vectors
             for (size_t j = 0; j < inputVectors.size(); ++j) {
                 if (j == static_cast<size_t>(smallestIndex)) {
                     continue;
@@ -81,9 +76,8 @@ std::vector<int> parallelLinearScanIntersection(const std::vector<std::vector<in
             if (in_all) {
                 threadResults[tid].push_back(candidate);
             }
-        } // End parallel for loop
-
-    } // End parallel region
+        }
+    }
     
     std::cout << "Finished parallel processing." << std::endl;
     for (const auto& localVec : threadResults) {
@@ -238,11 +232,11 @@ std::vector<int> parallelCriticalIntersection(const std::vector<std::vector<int>
                 smallestIndex = static_cast<int>(i);
             }
         } else {
-            return {}; // Intersection with empty set is empty
+            return {};
         }
     }
     if (smallestIndex == -1) {
-        return {}; // All vectors were empty
+        return {};
     }
 
     std::cout << "Smallest vector index: " << smallestIndex << std::endl;

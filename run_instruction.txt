@@ -1,0 +1,6 @@
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release # Use Release for performance testing
+
+
+python modified_generator.py --length 100 --overlap-ratio 0.4 --distribution uniform
+python modified_generator.py --length 100 --overlap-ratio 0.4 --distribution range_overlap
