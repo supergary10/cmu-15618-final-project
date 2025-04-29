@@ -7,6 +7,7 @@
 #include <numeric>
 #include <omp.h>
 #include <algorithm>
+#include <cstdlib> // For getenv
 
 #include "intersection.hpp"
 #include "enhanced_intersection.hpp"
@@ -52,13 +53,39 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    if (numPartitions == 0) {
-        numPartitions = omp_get_max_threads();
-        cout << "Using default number of partitions (max threads): " << numPartitions << endl;
-    } else {
-        cout << "Requesting " << numPartitions << " partitions/threads." << endl;
+    // Check if OMP_NUM_THREADS environment variable is set
+    char* env_num_threads = getenv("OMP_NUM_THREADS");
+    int env_threads = 0;
+    if (env_num_threads) {
+        try {
+            env_threads = stoi(env_num_threads);
+            cout << "Environment variable OMP_NUM_THREADS is set to: " << env_threads << endl;
+        } catch (...) {
+            cout << "Invalid OMP_NUM_THREADS value: " << env_num_threads << endl;
+        }
     }
 
+    if (numPartitions == 0) {
+        if (env_threads > 0) {
+            numPartitions = env_threads;
+            cout << "Using OMP_NUM_THREADS value: " << numPartitions << endl;
+        } else {
+            numPartitions = omp_get_max_threads();
+            cout << "Using default number of partitions (max threads): " << numPartitions << endl;
+        }
+    } else {
+        cout << "Requested number of threads: " << numPartitions << endl;
+        
+        // Check if requested threads exceeds hardware capability
+        int max_threads = omp_get_max_threads();
+        if (numPartitions > max_threads) {
+            cout << "WARNING: Requested thread count (" << numPartitions 
+                 << ") exceeds hardware thread count (" << max_threads 
+                 << "). This may result in oversubscription." << endl;
+        }
+    }
+
+    // Set OpenMP thread count
     omp_set_num_threads(numPartitions);
 
     cout << "Loading test data from: " << filename << "..." << endl;
@@ -69,6 +96,8 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     cout << "Data loaded successfully. Number of vectors: " << inputVectors.size() << endl;
+    
+    // Print vector sizes and validate input
     bool anyVectorEmpty = false;
     for(size_t i = 0; i < inputVectors.size(); ++i) {
         cout << "  Vector " << i << " size: " << inputVectors[i].size() << endl;
@@ -81,6 +110,7 @@ int main(int argc, char* argv[]) {
     cout << "\n--- Running Parallel Intersection ---" << endl;
     cout << "Algorithm: " << algorithm << endl;
 
+    // Verify actual number of threads being used
     #pragma omp parallel
     {
         #pragma omp single
@@ -89,7 +119,9 @@ int main(int argc, char* argv[]) {
                 << ", Actual threads for this run: " << omp_get_num_threads() << ")" << endl;
         }
     }
-
+    
+    // Main benchmark
+    cout << "Starting benchmark timing..." << endl;
     auto start = chrono::steady_clock::now();
     vector<int> result;
  

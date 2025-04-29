@@ -3,7 +3,6 @@ import os
 import math
 import argparse
 import numpy as np
-from tqdm import tqdm
 
 def generate_zipfian_distribution(size, alpha=1.0, value_range=(0, 1000000)):
     """Generate values following a Zipfian distribution"""
