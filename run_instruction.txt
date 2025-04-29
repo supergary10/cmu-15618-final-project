@@ -1,5 +1,5 @@
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release # Use Release for performance testing
+cmake .. -DCMAKE_BUILD_TYPE=Release
 
 
 python modified_generator.py --length 100 --overlap-ratio 0.4 --distribution uniform

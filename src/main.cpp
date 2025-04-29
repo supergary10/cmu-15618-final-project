@@ -9,15 +9,23 @@
 #include <algorithm>
 
 #include "intersection.hpp"
+#include "enhanced_intersection.hpp"
 #include "generate_data.hpp"
 
 using namespace std;
 
 void printUsage(const string & exeName) {
-    cerr << "Usage: " << exeName << " <datafile.txt> op [numPartitions]" << endl;
-    cerr << "  op: Mode flag to run the optimized (naive one-by-one) parallel join." << endl;
-    cerr << "      Options: op, range, critical" << endl;
-    cerr << "  [numPartitions]: Optional. Number of partitions to use for splitting the key range." << endl;
+    cerr << "Usage: " << exeName << " <datafile.txt> algorithm [numPartitions]" << endl;
+    cerr << "  algorithm: Algorithm to use for intersection." << endl;
+    cerr << "      Options: " << endl;
+    cerr << "          op       - Basic parallel linear scan" << endl;
+    cerr << "          range    - Range partitioning" << endl;
+    cerr << "          critical - Critical section approach" << endl; 
+    cerr << "          binary   - Binary search optimization" << endl;
+    cerr << "          adaptive - Adaptive range partitioning" << endl;
+    cerr << "          leapfrog - Parallel leapfrog join" << endl;
+    cerr << "          worksteal - Work stealing approach" << endl;
+    cerr << "  [numPartitions]: Optional. Number of partitions/threads to use." << endl;
     cerr << "                   (If omitted, defaults to the number of OpenMP threads.)" << endl;
 }
 
@@ -28,7 +36,7 @@ int main(int argc, char* argv[]) {
     }
 
     string filename = argv[1];
-    string mode = argv[2];
+    string algorithm = argv[2];
  
     int numPartitions = 0;
     if (argc == 4) {
@@ -71,7 +79,7 @@ int main(int argc, char* argv[]) {
     }
  
     cout << "\n--- Running Parallel Intersection ---" << endl;
-    cout << "Mode: " << mode << endl;
+    cout << "Algorithm: " << algorithm << endl;
 
     #pragma omp parallel
     {
@@ -85,12 +93,24 @@ int main(int argc, char* argv[]) {
     auto start = chrono::steady_clock::now();
     vector<int> result;
  
-    if (mode == "op") {
+    if (algorithm == "op") {
         result = parallelLinearScanIntersection(inputVectors, numPartitions);
-    } else if (mode == "range") {
+    } else if (algorithm == "range") {
         result = rangePartition(inputVectors, numPartitions);
-    } else if (mode == "critical") {
+    } else if (algorithm == "critical") {
         result = parallelCriticalIntersection(inputVectors, numPartitions);
+    } else if (algorithm == "binary") {
+        result = binarySearchIntersection(inputVectors, numPartitions);
+    } else if (algorithm == "adaptive") {
+        result = adaptiveRangePartition(inputVectors, numPartitions);
+    } else if (algorithm == "leapfrog") {
+        result = parallelLeapfrogJoin(inputVectors, numPartitions);
+    } else if (algorithm == "worksteal") {
+        result = workStealingIntersection(inputVectors, numPartitions);
+    } else {
+        cerr << "Unknown algorithm: " << algorithm << endl;
+        printUsage(argv[0]);
+        return 1;
     }
  
     auto end = chrono::steady_clock::now();
@@ -102,5 +122,4 @@ int main(int argc, char* argv[]) {
     cout << "Threads used (set by omp_set_num_threads): " << numPartitions << std::endl;
  
     return 0;
- }
- 
+}
